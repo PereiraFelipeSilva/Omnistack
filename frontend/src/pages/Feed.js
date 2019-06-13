@@ -11,13 +11,18 @@ import send from '../assets/send.svg';
 class Feed extends Component {
    state = {
       feed: [],
-   }
+   };
 
    async componentDidMount() {
       const response = await api.get('posts');
 
       this.setState({ feed: response.data });
    }
+
+   handleLike = id => {
+      api.post(`/posts/${id}/like`);
+   }
+
    render(){
       return (
          <section id="post-list">
@@ -33,7 +38,11 @@ class Feed extends Component {
                   <img src={`http://localhost:3333/files/${post.image}`} alt="Mais" />
                <footer>
                   <div className="actions">
-                     <img src={like} alt="" />
+
+                     <button type="button" onClick={() => this.handleLike(post._id)}>
+                        <img src={like} alt="" />
+                     </button>
+
                      <img src={comment} alt="" />
                      <img src={send} alt="" />
                   </div>
