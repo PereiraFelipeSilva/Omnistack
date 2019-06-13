@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import api from '../services/api';
 
 import './Feed.css';
 
@@ -8,18 +9,28 @@ import comment from '../assets/comment.svg';
 import send from '../assets/send.svg';
 
 class Feed extends Component {
+   state = {
+      feed: [],
+   }
+
+   async componentDidMount() {
+      const response = await api.get('posts');
+
+      this.setState({ feed: response.data });
+   }
    render(){
       return (
          <section id="post-list">
-            <article>
+            { this.state.feed.map(post => (
+               <article key={post._id}>
                <header>
                   <div className="user-info">
-                     <span>Felipe Silva</span>
-                     <span className="place">Minas Gerais</span>
+                     <span>{post.author}</span>
+                     <span className="place">{post.place}</span>
                   </div>
                   <img src={more} alt="Mais" />
                </header>
-                  <img src="http://localhost:3333/files/foto_felipe.jpg" alt="Mais" />
+                  <img src={`http://localhost:3333/files/${post.image}`} alt="Mais" />
                <footer>
                   <div className="actions">
                      <img src={like} alt="" />
@@ -27,39 +38,15 @@ class Feed extends Component {
                      <img src={send} alt="" />
                   </div>
 
-                  <strong>91 curtidas</strong>
+                  <strong>{post.likes}</strong>
 
                   <p>
-                     A serenidade do olhar de quem vai entrar de férias!
-                     <span>#ferias #top</span>
+                     {post.description}
+                     <span>{post.hashtags}</span>
                   </p>
                </footer>
             </article>
-
-            <article>
-               <header>
-                  <div className="user-info">
-                     <span>Felipe Silva</span>
-                     <span className="place">Minas Gerais</span>
-                  </div>
-                  <img src={more} alt="Mais" />
-               </header>
-                  <img src="http://localhost:3333/files/foto_felipe.jpg" alt="Mais" />
-               <footer>
-                  <div className="actions">
-                     <img src={like} alt="" />
-                     <img src={comment} alt="" />
-                     <img src={send} alt="" />
-                  </div>
-
-                  <strong>91 curtidas</strong>
-
-                  <p>
-                     A serenidade do olhar de quem vai entrar de férias!
-                     <span>#ferias #top</span>
-                  </p>
-               </footer>
-            </article>
+            )) }
          </section>
       );
    }
